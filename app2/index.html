@@ -1,50 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>學生資料管理系統</title>
-    <link rel="shortcut icon" href="#" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
-    <!---匯入要使用的函式庫--->
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>學生資料管理系統</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="shortcut icon" href="#" type="image/x-icon">
+  <link rel="stylesheet" href="style.css">
+  <!---匯入要使用的函式庫--->
+  <script src="jquery-3.4.1.min.js"></script>
 
 </head>
-<body>
-  <h1 class="header">學生資料管理系統</h1>
 
-  
+<body class="container">
+  <h1 class="header">學生資料管理系統</h1>
+  <input type="button" value="新增" class="btn btn-primary" onclick="openInsert()">
+
+  <div class="query">
+    班級：<select name="classes" id="classes" onchange="getStudents(this.value)">
+
+
+    </select>
+    <input type="text" name="q" id="query"><input type="button" value="查詢" onclick="query()">
+    <div class="query-result"></div>
+    <div class="students"></div>
+
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- 新增資料用的表單 -->
+  <div id="insertBlock" style="display:none">
+    <h3>新增學生資料</h3>
+    <form action="api/insert.php" method="post" class="" id="create">
+      <ul class="form-group">
+
+        <li class="form-group col">
+          <label for="name" class="col-6">姓名</label>
+          <input type="text" name="name" id="name" class="col-6"></li>
+        <li class="form-group">
+          <label for="class_num">班級座號</label>
+          <input type="text" name="class_num" id="class_num"></li>
+        <li class="form-group">
+          <label for="uni_id">學號</label>
+          <input type="text" name="uni_id" id="uni_id"></li>
+        <li class="form-group">
+          <label for="birthday">生日</label>
+          <input type="text" name="birthday" id="birthday"></li>
+        <li class="form-group">
+          <label for="nat_id">身份證字號</label>
+          <input type="text" name="nat_id" id="nat_id"></li>
+        <li class="form-group">
+          <label for="addr">住址</label>
+          <input type="text" name="addr" id="addr"></li>
+        <li class="form-group">
+          <label for="parent">父母</label>
+          <input type="text" name="parent" id="parent"></li>
+        <li class="form-group">
+          <label for="tel">電話</label>
+          <input type="text" name="tel" id="tel"></li>
+        <li class="form-group">
+          <label for="dept">科別</label>
+          <input type="text" name="dept" id="dept"></li>
+        <li class="form-group">
+          <label for="grad_at">畢業國中</label>
+          <input type="text" name="grad_at" id="grad_at"></li>
+      </ul>
+      <input type="button" value="確定新增" class="btn btn-secondary" onclick="create()">
+    </form>
+  </div>
+
 </body>
+
 </html>
 <script>
-/************************************
-* 1.考慮觸發行為的事件
-* 2.建立監聽行為
-* 3.考慮是否需要代入參數
-* 4.是否會有回傳值？回傳值的功用及處理？
-* 5.是否需要更新畫面內容？更新畫面的方法？
-************************************/
+  /************************************
+  * 1.考慮觸發行為的事件
+  * 2.建立監聽行為
+  * 3.考慮是否需要代入參數
+  * 4.是否會有回傳值？回傳值的功用及處理？
+  * 5.是否需要更新畫面內容？更新畫面的方法？
+  ************************************/
 
 
-//新增資料的函式
-function create(){
+  //新增資料的函式
+  function create() {
+    let name = document.querySelector("#name").value;
+    let class_num = document.querySelector("#class_num").value;
+    let uni_id = document.querySelector("#uni_id").value;
+    let birthday = document.querySelector("#birthday").value;
+    let nat_id = document.querySelector("#nat_id").value;
+    let addr = document.querySelector("#addr").value;
+    let parent = document.querySelector("#parent").value;
+    let tel = document.querySelector("#tel").value;
+    let dept = document.querySelector("#dept").value;
+    let grad_at = document.querySelector("#grad_at").value;
+    console.log(name, class_num, uni_id, birthday, nat_id, addr, parent, tel, dept, grad_at);
+    $.post("api/insert.php", { name, class_num, uni_id, birthday, nat_id, addr, parent, tel, dept, grad_at }, function (res) {
+      console.log(res);
+      if (res == '1') alert("新增成功");
+      document.querySelector('#insertBlock').style.display = 'none';
+    })
+  }
 
-}
 
-//查詢資料的函式
-function query(){
+  function openInsert() {
+    document.querySelector('#insertBlock').style.display = 'block';
 
-}
+  }
 
-//編輯資料的函式
-function update(){
+  //查詢資料的函式
+  function getClasses() {
+    $.get("api/select_class.php", function (option) {
+      // console.log(option)
+      document.querySelector("#classes").innerHTML = option;
+    })
+  }
 
-}
+  function getStudents(_class) {
+    // console.log(_class);
+    $.get("api/get_students.php", { 'class': _class }, function (students) {
+      // console.log(students);
+      document.querySelector(".students").innerHTML = students;
+    })
+  }
 
-//刪除資料的函式
-function del(){
+  function query() {
+    let str = document.querySelector("#query").value;
+    $.get("api/query.php", { str }, function (res) {
+      document.querySelector(".query-result").innerHTML = res;
+    })
+  }
 
-}
+  //編輯資料的函式
+  function update() {
 
+  }
+
+  //刪除資料的函式
+  function del() {
+
+  }
+  getClasses()
 </script>
