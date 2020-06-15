@@ -1,43 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>jQuery</title>
-    <link rel="shortcut icon" href="#" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
-      <!-------引入jQuery函式庫------->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>jQuery</title>
+  <link rel="shortcut icon" href="#" type="image/x-icon">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <!-------引入jQuery函式庫------->
+  <script src="js/jquery-3.4.1.min.js"></script>
 </head>
-<body>
-    <h1 class="header">jQuery</h1>
-    <div class="title"></div>
-    <h4></h4>
-    <ul></ul>
-    
+
+<body class="container">
+  <h1 class="header">jQuery</h1>
+  <div class="title display-4"></div>
+  <h4></h4>
+  <ul class="flex-column btn-group"></ul>
+
 </body>
+
 </html>
 <script>
-    /********************************************************
-    * 1.api網址  https://kktix.com/events.json
-    * 2.選擇$.ajax()、$.get()、$.post()其中一種方式
-    * 3.建立回呼函式(call back function)來處理回應時的各項行為
-    * 4.建立錯誤處理
-    ********************************************************/
-     
-    //利用$.ajax()方法傳送請求並取得回應
-    /* $.ajax(
-      {
-        url:'',
-        type:'',
-        success:,
-        error:,
-        complete:
-      }
-    ) */   
+  /********************************************************
+  * 1.api網址  https://kktix.com/events.json
+  * 2.選擇$.ajax()、$.get()、$.post()其中一種方式
+  * 3.建立回呼函式(call back function)來處理回應時的各項行為
+  * 4.建立錯誤處理
+  ********************************************************/
 
-    
+  //利用$.ajax()方法傳送請求並取得回應
+
+  //原生做法：
+  // $.ajax(
+  //   {
+  //     url: 'https://kktix.com/events.json',
+  //     type: 'get',
+  //     success: (response) => {
+  //       console.log(response);
+  //       renderList(response);
+
+  //     },
+  //     error: function (err) {
+  //       console.log("error:" + err);
+  //     },
+  //     complete: function (xhr, status) {
+  //       console.log("status:" + status);
+  //     }
+  //   }
+  // )
+
+  $.get('https://kktix.com/events.json', function (response) { //原生做法中的函式都有，要上jq網站去查文件
+    console.log(response);
+    renderList(response);
+  })
+
+  // 還可以再精簡一點，不過會需要處理
+  // $("ul").load('https://kktix.com/events.json');
+
+
+  renderList = (response) => {
+    document.querySelector('.title').innerHTML = response.title;
+    document.querySelector('h4').innerHTML = response.updated;
+    let events = response.entry;
+    let str = response.title;
+    events.forEach((event, index) => {
+      str = str + `<li class="m-2 btn btn-info text-left shadow">${index + 1} . ${event.title}，詳情請見<a class="btn btn-warning ml-3 rounded-pill badge" href="${event.url}" target="_blank">活動網址</a></li>`;
+    });
+
+    document.querySelector('ul').innerHTML = str;
+  }
+
+
     //利用$.get()方法傳送請求並取得回應
 
 
-  </script>
+</script>

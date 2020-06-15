@@ -7,13 +7,17 @@
     <title>axios</title>
     <link rel="shortcut icon" href="#" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
     <!-----引入axios函式庫------->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 </head>
-<body>
+<body class="container text-center">
     <h1 class="header">axios</h1>
-    <div class="title"></div>
+    <div class="title display-4"></div>
     <h4></h4>
-    <ul></ul>
+    <ul class="flex-column btn-group"></ul>
     
 </body>
 </html>
@@ -26,10 +30,30 @@
 ********************************************************/
 
 //發起一個axios請求
+axios.get('https://kktix.com/events.json')
+.then(function(response){
+    console.log(response);
+    renderList(response.data);
+})
+.catch(function (err){
+    console.log("error:"+err);
+})
+
+
 
 
 //建立回呼函式(call back function)來處理回應時的各項行為
+function renderList(response){
+            document.querySelector('.title').innerHTML = response.title;
+            document.querySelector('h4').innerHTML = response.updated;
+            let events = response.entry;
+            let str = response.title;
+            events.forEach((event, index) => {
+                str = str + `<li class="m-2 btn btn-info text-left shadow">${index + 1} . ${event.title}，詳情請見<a class="btn btn-warning ml-3 rounded-pill badge" href="${event.url}" target="_blank">活動網址</a></li>`;
+            });
 
+            document.querySelector('ul').innerHTML = str;
+        }
 
 //建立錯誤處理
 
