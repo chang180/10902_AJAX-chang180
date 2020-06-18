@@ -21,12 +21,14 @@
 
   <div class="query">
     班級：<select name="classes" id="classes" onchange="getStudents(this.value)">
-
-
     </select>
     <input type="text" name="q" id="query"><input type="button" value="查詢" onclick="query()">
+    <div class="edit-form"></div>
+    <div class="add-form"></div>
     <div class="query-result"></div>
     <div class="students"></div>
+
+
 
 
   </div>
@@ -50,45 +52,11 @@
 
 
   <!-- 新增資料用的表單 -->
-  <div id="insertBlock" style="display:none">
-    <h3>新增學生資料</h3>
-    <form action="api/insert.php" method="post" class="" id="create">
-      <ul class="form-group">
 
-        <li class="form-group col">
-          <label for="name" class="col-6">姓名</label>
-          <input type="text" name="name" id="name" class="col-6"></li>
-        <li class="form-group">
-          <label for="class_num">班級座號</label>
-          <input type="text" name="class_num" id="class_num"></li>
-        <li class="form-group">
-          <label for="uni_id">學號</label>
-          <input type="text" name="uni_id" id="uni_id"></li>
-        <li class="form-group">
-          <label for="birthday">生日</label>
-          <input type="text" name="birthday" id="birthday"></li>
-        <li class="form-group">
-          <label for="nat_id">身份證字號</label>
-          <input type="text" name="nat_id" id="nat_id"></li>
-        <li class="form-group">
-          <label for="addr">住址</label>
-          <input type="text" name="addr" id="addr"></li>
-        <li class="form-group">
-          <label for="parent">父母</label>
-          <input type="text" name="parent" id="parent"></li>
-        <li class="form-group">
-          <label for="tel">電話</label>
-          <input type="text" name="tel" id="tel"></li>
-        <li class="form-group">
-          <label for="dept">科別</label>
-          <input type="text" name="dept" id="dept"></li>
-        <li class="form-group">
-          <label for="grad_at">畢業國中</label>
-          <input type="text" name="grad_at" id="grad_at"></li>
-      </ul>
-      <input type="button" value="確定新增" class="btn btn-secondary" onclick="create()">
-    </form>
-  </div>
+
+
+
+
 
 </body>
 
@@ -101,7 +69,7 @@
   * 4.是否會有回傳值？回傳值的功用及處理？
   * 5.是否需要更新畫面內容？更新畫面的方法？
   ************************************/
-
+  getClasses();
 
   //新增資料的函式
   function create() {
@@ -115,7 +83,7 @@
     let tel = document.querySelector("#tel").value;
     let dept = document.querySelector("#dept").value;
     let grad_at = document.querySelector("#grad_at").value;
-    console.log(name, class_num, uni_id, birthday, nat_id, addr, parent, tel, dept, grad_at);
+    // console.log(name, class_num, uni_id, birthday, nat_id, addr, parent, tel, dept, grad_at);
     $.post("api/insert.php", { name, class_num, uni_id, birthday, nat_id, addr, parent, tel, dept, grad_at }, function (res) {
       console.log(res);
       if (res == '1') alert("新增成功");
@@ -125,8 +93,19 @@
 
 
   function openInsert() {
-    document.querySelector('#insertBlock').style.display = 'block';
+    // document.querySelector('#insertBlock').style.display = 'block';
+    $.get("api/add_form.php", function (form) {
+      document.querySelector(".edit-form").innerHTML = "";
+      document.querySelector(".add-form").innerHTML = form;
+    })
 
+  }
+
+  function update() {
+
+    $.post("api/update.php", {}, function (res) {
+
+    })
   }
 
   //查詢資料的函式
@@ -153,13 +132,68 @@
   }
 
   //編輯資料的函式
-  function update() {
-
+  function getUpdateForm(id) {
+    $.get("api/edit.php", { id }, function (form) {
+      document.querySelector(".edit-form").innerHTML = form;
+      document.querySelector(".add-form").innerHTML = "";
+    })
   }
+  function update() {
+    let form_data = {};
+
+    form_data['name'] = document.querySelector("#name").value;
+    form_data['class_num'] = document.querySelector("#class_num").value;
+    form_data['uni_id'] = document.querySelector("#uni_id").value;
+    form_data['birthday'] = document.querySelector("#birthday").value;
+    form_data['nat_id'] = document.querySelector("#nat_id").value;
+    form_data['addr'] = document.querySelector("#addr").value;
+    form_data['parent'] = document.querySelector("#parent").value;
+    form_data['tel'] = document.querySelector("#tel").value;
+    form_data['dept'] = document.querySelector("#dept").value;
+    form_data['grad_at'] = document.querySelector("#grad_at").value;
+    form_data['id'] = document.querySelector("#id").value;
+
+
+    console.log(form_data);
+
+    $.post("api/update.php", form_data, function (res) {
+      // console.log(res);
+      if (res == '1') {
+        alert("更新成功");
+        let nowClass = document.querySelector("#classes").value
+        getStudents(nowClass);
+        document.querySelector(".edit-form").innerHTML = "";
+
+      } else {
+        alert("無更新資料");
+        let nowClass = document.querySelector("#classes").value
+        getStudents(nowClass);
+        document.querySelector(".edit-form").innerHTML = "";
+      }
+    })
+  }
+
+
 
   //刪除資料的函式
-  function del() {
+  function del(id) {
+    $.post("api/del.php", { id }, function (res) {
+      if (res == 1) {
+        alert("已成功刪除id" + id + "資料");
+        let nowClass = document.querySelector("#classes").value
+        getStudents(nowClass);
+      } else {
+        alert("刪除失敗，請洽管理員");
+      }
+    })
 
   }
-  getClasses()
+  getClasses();
+
+  //取消功能
+
+  function cancel(){
+    document.querySelector(".edit-form").innerHTML = "";
+      document.querySelector(".add-form").innerHTML = "";
+  }
 </script>
