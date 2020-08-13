@@ -12,6 +12,11 @@
   <link rel="stylesheet" href="style.css">
   <!---匯入要使用的函式庫--->
   <script src="jquery-3.4.1.min.js"></script>
+  <style>
+    .user{
+      color:antiquewhite;
+    }
+  </style>
 
 </head>
 
@@ -22,7 +27,7 @@
   <div class="query">
     班級：<select name="classes" id="classes" onchange="getStudents(this.value)">
     </select>
-    <input type="text" name="q" id="query"><input type="button" value="查詢" onclick="query()">
+    <input type="text" name="q" id="query"><input type="button" value="查詢" onclick="ai()">
     <div class="edit-form"></div>
     <div class="add-form"></div>
     <div class="query-result"></div>
@@ -69,7 +74,7 @@
   * 4.是否會有回傳值？回傳值的功用及處理？
   * 5.是否需要更新畫面內容？更新畫面的方法？
   ************************************/
-  getClasses();
+  // getClasses();
 
   //新增資料的函式
   function create() {
@@ -121,6 +126,8 @@
     $.get("api/get_students.php", { 'class': _class }, function (students) {
       // console.log(students);
       document.querySelector(".students").innerHTML = students;
+      document.querySelector(".query-result").innerHTML="";
+
     })
   }
 
@@ -196,4 +203,44 @@
     document.querySelector(".edit-form").innerHTML = "";
       document.querySelector(".add-form").innerHTML = "";
   }
+
+  //智慧查詢提示功能
+
+
+// function ai(){
+
+//   let str=document.querySelector('#query').value;
+//   $.get("api/query.php",{str},function(res){
+//     console.log(res);
+//     let data = JSON.parse(res);
+    
+//     let dom="";
+//     data.forEach(function(value,index){
+//       dom=dom+"<span style='font-size:20px'>"+value.name+"-"+value.class_num+"</span><br>";
+//     })
+//     document.querySelector(".query-result").innerHTML=dom;
+//   })
+// }
+$("#query").on("input",()=>{ai()})
+
+function ai(){
+  let str=document.querySelector("#query").value;
+  $.get("api/query.php",{str},function(res){
+      // console.log(res)
+      let data=JSON.parse(res)
+      // console.log(data);
+      //document.querySelector(".query-result").innerHTML=res
+      let dom="";
+      data.forEach(function(value,index){
+        dom=dom+`
+        <div class="btn-group">
+        <button class="btn btn-danger m-1 rounded-pill shadow">${value.姓名}</button>
+        <button class="btn btn-warning m-1 rounded-pill shadow">${value.班級}</button>
+        <button class="btn btn-success m-1 pr-2 rounded-pill shadow">${value.畢業國中}</button>
+        </div>`;
+      })
+      document.querySelector(".query-result").innerHTML=dom;
+      document.querySelector(".edit-form").innerHTML = ""
+  })
+}
 </script>
